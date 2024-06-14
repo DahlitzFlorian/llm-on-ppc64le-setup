@@ -12,3 +12,7 @@ Simply follow the steps in the `setup.sh` script or build a container image and 
 $ docker image build -t llm-ppc64le .
 $ docker container run --rm --name llm-ppc64le -itd -p 8000:8000 llm-ppc64le
 ```
+
+### Llama CPP
+
+If you want to use llama.cpp, remove the `uvicorn` command and use llama.cpp via command line.

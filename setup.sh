@@ -14,6 +14,7 @@ dnf -y upgrade
 dnf -y groupinstall "Development Tools"
 dnf -y install \
     bzip2 \
+    gcc-toolset-12 \
     libxcrypt-compat \
     openssl
 
@@ -57,6 +58,7 @@ micromamba install \
     'blas=*=openblas' \
     'arrow' \
     'bcrypt' \
+    'cmake' \
     'fastapi' \
     'httptools' \
     'numpy' \
@@ -77,6 +79,9 @@ micromamba install \
 
 # install optimum for converting models to onnx
 pip install --prefer-binary --no-cache-dir "git+https://github.com/mgiessing/optimum.git@quant_ppc64le"
+
+# build llama.cpp if needed
+CMAKE_ARGS="-DLLAMA_BLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" pip install 'llama-cpp-python[server]'
 
 # download model and convert it to onnx format
 optimum-cli export onnx --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 tinyllama_onnx/

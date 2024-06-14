@@ -27,6 +27,7 @@ RUN dnf -y install \
     dnf -y groupinstall "Development Tools" && \
     dnf -y install \
         bzip2 \
+        gcc-toolset-12 \
         libxcrypt-compat \
         openssl \
         && \
@@ -55,6 +56,7 @@ RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-ppc64le/latest | \
         # additional packages (alphabetical order)
         'arrow' \
         'bcrypt' \
+        'cmake' \
         'fastapi' \
         'httptools' \
         'numpy' \
@@ -82,6 +84,9 @@ RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-ppc64le/latest | \
 EXPOSE 8000
 
 WORKDIR /app
+
+# build llama.cpp if needed
+RUN CMAKE_ARGS="-DLLAMA_BLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" pip install 'llama-cpp-python[server]'
 
 # download and convert model to onnx
 RUN optimum-cli export onnx --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 tinyllama_onnx/
