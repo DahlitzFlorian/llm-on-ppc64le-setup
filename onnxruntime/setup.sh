@@ -2,6 +2,10 @@
 export APPLICATION_DIRECTORY="${HOME}/app"
 export CONDA_PREFIX="/opt/conda"
 
+# set default MODEL value if unset
+: ${MODEL:="TinyLlama/TinyLlama-1.1B-Chat-v1.0"}
+export MODEL
+
 # install dev tools
 dnf -y install \
     dnf-plugins-core \
@@ -14,7 +18,6 @@ dnf -y upgrade
 dnf -y groupinstall "Development Tools"
 dnf -y install \
     bzip2 \
-    gcc-toolset-12 \
     libxcrypt-compat \
     openssl
 
@@ -58,7 +61,6 @@ micromamba install \
     'blas=*=openblas' \
     'arrow' \
     'bcrypt' \
-    'cmake' \
     'fastapi' \
     'httptools' \
     'numpy' \
@@ -80,11 +82,8 @@ micromamba install \
 # install optimum for converting models to onnx
 pip install --prefer-binary --no-cache-dir "git+https://github.com/mgiessing/optimum.git@quant_ppc64le"
 
-# build llama.cpp if needed
-CMAKE_ARGS="-DLLAMA_BLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" pip install 'llama-cpp-python[server]'
-
 # download model and convert it to onnx format
-optimum-cli export onnx --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 tinyllama_onnx/
+optimum-cli export onnx --model ${MODEL} model_onnx/
 
 # start the backend
 uvicorn main:app --host 0.0.0.0 --port 8000

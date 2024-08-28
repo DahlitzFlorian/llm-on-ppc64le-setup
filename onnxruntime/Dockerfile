@@ -7,6 +7,7 @@ ARG PYTORCH_VERSION=2.0.1
 ARG TENSORFLOW=tensorflow-cpu
 ARG TENSORFLOW_VERSION=2.13.0
 ARG MICRO_MAMBA_TARGETARCH=ppc64le
+ARG MODEL="TinyLlama/TinyLlama-1.1B-Chat-v1.0"
 
 ENV CONDA_DIR=/opt/conda \
     SHELL=/bin/bash
@@ -27,7 +28,6 @@ RUN dnf -y install \
     dnf -y groupinstall "Development Tools" && \
     dnf -y install \
         bzip2 \
-        gcc-toolset-12 \
         libxcrypt-compat \
         openssl \
         && \
@@ -56,7 +56,6 @@ RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-ppc64le/latest | \
         # additional packages (alphabetical order)
         'arrow' \
         'bcrypt' \
-        'cmake' \
         'fastapi' \
         'httptools' \
         'numpy' \
@@ -85,11 +84,8 @@ EXPOSE 8000
 
 WORKDIR /app
 
-# build llama.cpp if needed
-RUN CMAKE_ARGS="-DLLAMA_BLAS=ON -DLLAMA_BLAS_VENDOR=OpenBLAS" pip install 'llama-cpp-python[server]'
-
 # download and convert model to onnx
-RUN optimum-cli export onnx --model TinyLlama/TinyLlama-1.1B-Chat-v1.0 tinyllama_onnx/
+RUN optimum-cli export onnx --model ${MODEL} model_onnx/
 
 COPY main.py main.py
 

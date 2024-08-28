@@ -11,7 +11,7 @@ from transformers import AutoTokenizer
 
 options = onnxruntime.SessionOptions()
 options.intra_op_num_threads = 12
-model_id = "/app/tinyllama_onnx/"
+model_id = "/app/model_onnx/"
 model = ORTModelForCausalLM.from_pretrained(model_id, session_options=options)
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 
